@@ -43,13 +43,14 @@ def encode_if_on_windows(string: str) -> str:
 class TestLocalFilesystemStateStoreManager:
     @pytest.fixture(scope="function")
     def subject(self, test_dir):
-        kwargs = {
-            "uri": f"file://{test_dir}/.meltano/state/",
-            "lock_timeout_seconds": 10,
-        }
         if on_windows():
-            yield WindowsFilesystemStateStoreManager(**kwargs)
-        yield LocalFilesystemStateStoreManager(**kwargs)
+            yield WindowsFilesystemStateStoreManager(
+                uri=f"file://{test_dir}\\.meltano\\state\\", lock_timeout_seconds=10
+            )
+        else:
+            yield LocalFilesystemStateStoreManager(
+                uri=f"file://{test_dir}/.meltano/state/", lock_timeout_seconds=10
+            )
 
     @pytest.fixture(scope="function")
     def state_path(self, test_dir, subject: LocalFilesystemStateStoreManager):
