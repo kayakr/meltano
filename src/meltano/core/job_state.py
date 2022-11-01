@@ -56,7 +56,7 @@ class JobState(SystemModel):  # noqa: WPS214
             and (self.completed_state == other.completed_state)
         )
 
-    @classmethod
+    @classmethod  # noqa: WPS210
     def from_job_history(cls, session: Session, state_id: str):  # noqa: WPS210
         """Build JobState from job run history.
 

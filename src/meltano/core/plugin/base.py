@@ -594,7 +594,7 @@ class BasePlugin(HookObject):  # noqa: WPS214
         """
         return self._variant.settings
 
-    @property
+    @property  # noqa: WPS210
     def extra_settings(self):  # noqa: WPS210
         """Return the extra settings for this plugin.
 
