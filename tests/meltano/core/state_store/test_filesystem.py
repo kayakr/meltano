@@ -52,7 +52,8 @@ class TestLocalFilesystemStateStoreManager:
         yield LocalFilesystemStateStoreManager(**kwargs)
 
     @pytest.fixture(scope="function")
-    def state_path(self, test_dir):
+    def state_path(self, test_dir, subject: LocalFilesystemStateStoreManager):
+        Path(subject.state_dir).mkdir(parents=True, exist_ok=True)
         yield os.path.join(test_dir, ".meltano", "state")
         shutil.rmtree(os.path.join(test_dir, ".meltano", "state"), ignore_errors=True)
 
