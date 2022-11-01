@@ -39,7 +39,7 @@ class BookmarkWriter:
         """
         self.job = job
         self.session = session
-        self.state_service = state_service or StateService(session)
+        self.state_service = state_service or StateService(session=self.session)
         self.payload_flag = payload_flag
 
     def writeline(self, line: str):

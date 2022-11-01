@@ -446,7 +446,9 @@ meltano config meltano set elt.buffer_size 52428800 # 50MiB in bytes
 
 export MELTANO_ELT_BUFFER_SIZE=52428800
 ```
+## State Backends
 
+These settings can be used
 ## Meltano UI server
 
 These settings can be used to configure the [Meltano UI](/reference/ui) server.
