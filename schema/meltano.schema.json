@@ -51,8 +51,8 @@
                 "connection_string": {
                   "type": "string",
                   "description": "The azure connection string to use for connecting to Azure Blob Storage."
-                  }
                 }
+              }
             },
           "gcs": {
             "type": "object",
@@ -61,7 +61,7 @@
               "application_credentials": {
                 "type": "string",
                 "description": "Path to a Google credentials file to use for authenticating to Google Cloud Storage."
-                },
+                }
             }
         },
         "s3": {
