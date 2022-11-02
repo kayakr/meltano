@@ -30,7 +30,7 @@ class StateBackend(str, Enum):
     LOCAL_FILESYSTEM = "file"
     AZURE = "azure"
     S3 = "s3"
-    GCS = "gcs"
+    GCS = "gs"
 
     @classmethod
     def backends(cls) -> list[StateBackend]:
@@ -88,7 +88,9 @@ def state_store_manager_from_project_settings(  # noqa: WPS210
     # Get backend-specific settings
     # AND top-level state_backend settings
     setting_defs = filter(
-        lambda setting_def: setting_def.name.startswith(f"state_backend.{scheme}")
+        lambda setting_def: setting_def.name.startswith(
+            f"state_backend.{'gcs' if scheme == 'gs' else scheme}"
+        )
         or (
             setting_def.name.startswith("state_backend")
             and len(setting_def.name.split(".")) == 2
