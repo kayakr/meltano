@@ -466,6 +466,16 @@ class WindowsFilesystemStateStoreManager(LocalFilesystemStateStoreManager):
     label: str = "Local Windows Filesystem"
     delimiter = "\\"
 
+    def __init__(self, **kwargs):
+        """Initialize the LocalFilesystemStateStoreManager.
+
+        Args:
+            kwargs: additional kwargs to pass to parent __init__.
+        """
+        super().__init__(**kwargs)
+        self._state_path = self.parsed.netloc
+        Path(self._state_path).mkdir(parents=True, exist_ok=True)
+
     def get_path(self, state_id: str, filename: str | None = None) -> str:
         """Get the path for the given state_id and filename.
 
@@ -486,7 +496,6 @@ class WindowsFilesystemStateStoreManager(LocalFilesystemStateStoreManager):
             if filename
             else self.join_path(self.state_dir, state_id_path)
         )
-        logging.info(f"get_path called with {state_id}, {filename}; returned {ret_val}")
         return (
             self.join_path(self.state_dir, state_id_path, filename)
             if filename
