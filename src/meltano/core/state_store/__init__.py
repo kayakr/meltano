@@ -30,7 +30,7 @@ class StateBackend(str, Enum):
     LOCAL_FILESYSTEM = "file"
     AZURE = "azure"
     S3 = "s3"
-    GCS = "gs"
+    GCS = "gcs"
 
     @classmethod
     def backends(cls) -> list[StateBackend]:

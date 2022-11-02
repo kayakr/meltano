@@ -44,7 +44,7 @@
               "type": "integer",
               "description": "The number of seconds to wait between retrying lock acquisition."
               },
-            "az": {
+            "azure": {
               "type": "object",
               "description": "Configuration for Azure Blob Storage state backend.",
               "properties": {
@@ -54,7 +54,7 @@
                   }
                 }
             },
-          "gs": {
+          "gcs": {
             "type": "object",
             "description": "Configuration for Google Cloud Storage state backend.",
             "properties": {
@@ -62,10 +62,6 @@
                 "type": "string",
                 "description": "Path to a Google credentials file to use for authenticating to Google Cloud Storage."
                 },
-              "api_token": {
-                "type": "string",
-                "description": "Google API token to use for authenticating to Google Cloud Storage."
-              }
             }
         },
         "s3": {

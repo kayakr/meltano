@@ -67,15 +67,10 @@ settings:
   env_specific: true
 
 ## GCS state backend
-- name: state_backend.gs.application_credentials
+- name: state_backend.gcs.application_credentials
   kind: password
   env_specific: true
   env_aliases: ["GOOGLE_APPLICATION_CREDENTIALS"]
-
-- name: state_backend.gs.api_token
-  kind: password
-  env_specific: true
-  env_aliases: ["GOOGLE_API_TOKEN"]
 
 # CLI
 - name: cli.log_level
