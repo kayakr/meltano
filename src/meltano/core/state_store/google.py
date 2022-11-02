@@ -42,7 +42,7 @@ class GCSStateStoreManager(BaseFilesystemStateStoreManager):
         Returns:
             True if error represents file not being found, else False
         """
-        from google.api_core.exceptions import NotFound
+        from google.api_core.exceptions import NotFound  # type: ignore
 
         return isinstance(err, NotFound) and "blob" in err.args[0]
 
@@ -54,7 +54,7 @@ class GCSStateStoreManager(BaseFilesystemStateStoreManager):
             A google.cloud.storage.Client.
         """
         if not self._client:
-            from google.cloud.storage import Client
+            from google.cloud.storage import Client  # type: ignore
 
             if self.application_credentials:
                 self._client = Client.from_service_account_json(

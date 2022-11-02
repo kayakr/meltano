@@ -42,7 +42,7 @@ class AZStorageStateStoreManager(BaseFilesystemStateStoreManager):
         Returns:
             True if error represents file not being found, else False
         """
-        from azure.core.exceptions import ResourceNotFoundError
+        from azure.core.exceptions import ResourceNotFoundError  # type: ignore
 
         return (
             isinstance(err, ResourceNotFoundError)
@@ -57,7 +57,7 @@ class AZStorageStateStoreManager(BaseFilesystemStateStoreManager):
             An authenticated azure.storage.blob.BlobServiceClient
         """
         if self.connection_string and not self._client:
-            from azure.storage.blob import BlobServiceClient
+            from azure.storage.blob import BlobServiceClient  # type: ignore
 
             self._client = BlobServiceClient.from_connection_string(
                 self.connection_string

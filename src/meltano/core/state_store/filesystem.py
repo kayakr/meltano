@@ -17,7 +17,7 @@ from pathlib import Path
 from time import sleep
 from urllib.parse import urlparse
 
-from smart_open import open
+from smart_open import open  # type: ignore
 
 from meltano.core.job_state import JobState
 from meltano.core.state_store.base import StateStoreManager
