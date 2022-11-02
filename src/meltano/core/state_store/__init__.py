@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import platform
 from enum import Enum
+from typing import Union
 from urllib.parse import urlparse
 
 from sqlalchemy.orm import Session
@@ -18,6 +19,15 @@ from meltano.core.state_store.filesystem import (
 )
 from meltano.core.state_store.google import GCSStateStoreManager
 from meltano.core.state_store.s3 import S3StateStoreManager
+
+T_STATE_STORE_MANAGER = Union[
+    type[DBStateStoreManager],
+    type[LocalFilesystemStateStoreManager],
+    type[WindowsFilesystemStateStoreManager],
+    type[AZStorageStateStoreManager],
+    type[GCSStateStoreManager],
+    type[S3StateStoreManager],
+]
 
 
 class StateBackend(str, Enum):
@@ -42,7 +52,9 @@ class StateBackend(str, Enum):
         return list(cls)
 
     @property
-    def _managers(self) -> dict[StateBackend, type[StateStoreManager]]:
+    def _managers(
+        self,
+    ) -> dict[str, T_STATE_STORE_MANAGER]:
         """Get mapping of StateBackend to associated StateStoreManager.
 
         Returns:
@@ -57,7 +69,7 @@ class StateBackend(str, Enum):
         }
 
     @property
-    def manager(self) -> StateStoreManager:
+    def manager(self) -> T_STATE_STORE_MANAGER:
         """Get the StateStoreManager associated with this StateBackend.
 
         Returns:

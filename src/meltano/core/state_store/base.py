@@ -48,7 +48,7 @@ class StateStoreManager(ABC):
         ...
 
     @abstractmethod
-    def get(self, state_id) -> JobState:
+    def get(self, state_id) -> JobState | None:
         """Get the job state for the given state_id.
 
         Args:
