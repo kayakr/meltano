@@ -481,10 +481,16 @@ class WindowsFilesystemStateStoreManager(LocalFilesystemStateStoreManager):
             state_id_path = state_id
         else:
             state_id_path = f"{self.delimiter}{state_id}"
-        return (
+        ret_val = (
             self.join_path(self.state_dir, state_id_path, filename)
             if filename
             else self.join_path(self.state_dir, state_id_path)
+        )
+        logging.info(f"get_path called with {state_id}, {filename}; returned {ret_val}")
+        return (
+            self.join_path(self.state_dir, state_id_path, filename)
+            if filename
+            else self.join_path(self.state_dir, state_id_pat)
         )
 
     def get_state_ids(self, pattern: str | None = None):
