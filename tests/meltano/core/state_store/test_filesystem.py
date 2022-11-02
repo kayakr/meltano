@@ -440,7 +440,7 @@ class TestGCSStateStoreManager:
     @pytest.fixture(scope="function")
     def subject(self, test_dir):
         return GCSStateStoreManager(
-            uri="gs://meltano/state/",
+            uri="gcs://meltano/state/",
             application_credentials="path/to/creds/file",
             lock_timeout_seconds=10,
         )
