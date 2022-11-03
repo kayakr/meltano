@@ -20,19 +20,6 @@ from meltano.core.state_store.filesystem import (
 from meltano.core.state_store.google import GCSStateStoreManager
 from meltano.core.state_store.s3 import S3StateStoreManager
 
-try:
-    T_STATE_STORE_MANAGER = Union[
-        type[DBStateStoreManager],
-        type[LocalFilesystemStateStoreManager],
-        type[WindowsFilesystemStateStoreManager],
-        type[AZStorageStateStoreManager],
-        type[GCSStateStoreManager],
-        type[S3StateStoreManager],
-    ]
-except TypeError:
-    # Python 3.8 doesn't support the type[] syntax in type aliases
-    T_STATE_STORE_MANAGER = Any
-
 
 class StateBackend(str, Enum):
     """State backend."""
@@ -58,7 +45,17 @@ class StateBackend(str, Enum):
     @property
     def _managers(
         self,
-    ) -> dict[str, T_STATE_STORE_MANAGER]:
+    ) -> dict[
+        str,
+        Union[
+            type[DBStateStoreManager],
+            type[LocalFilesystemStateStoreManager],
+            type[WindowsFilesystemStateStoreManager],
+            type[AZStorageStateStoreManager],
+            type[GCSStateStoreManager],
+            type[S3StateStoreManager],
+        ],
+    ]:
         """Get mapping of StateBackend to associated StateStoreManager.
 
         Returns:
@@ -73,7 +70,16 @@ class StateBackend(str, Enum):
         }
 
     @property
-    def manager(self) -> T_STATE_STORE_MANAGER:
+    def manager(
+        self,
+    ) -> Union[
+        type[DBStateStoreManager],
+        type[LocalFilesystemStateStoreManager],
+        type[WindowsFilesystemStateStoreManager],
+        type[AZStorageStateStoreManager],
+        type[GCSStateStoreManager],
+        type[S3StateStoreManager],
+    ]:
         """Get the StateStoreManager associated with this StateBackend.
 
         Returns:
