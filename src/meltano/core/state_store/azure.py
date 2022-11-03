@@ -71,7 +71,7 @@ class AZStorageStateStoreManager(BaseFilesystemStateStoreManager):
         Returns:
             The relevant prefix
         """
-        return self.prefix
+        return self.prefix.lstrip(self.delimiter).rstrip(self.delimiter)
 
     def get_state_ids(self, pattern: str | None = None):  # noqa: WPS210
         """Get list of state_ids stored in the backend.

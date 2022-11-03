@@ -255,7 +255,7 @@ class TestAZStorageStateStoreManager:
         assert not got_reader
 
     def test_state_path(self, subject: AZStorageStateStoreManager):
-        assert subject.state_dir == "/state/"
+        assert subject.state_dir == "state"
 
     def test_delete(self, subject, mock_client):
         mock_blob_client = MagicMock()
@@ -332,7 +332,7 @@ class TestS3StateStoreManager:
             mock_client.assert_called_once_with("s3", endpoint_url=subject.endpoint_url)
 
     def test_state_path(self, subject: S3StateStoreManager):
-        assert subject.state_dir == "/state"
+        assert subject.state_dir == "state"
 
     def test_delete(self, subject: S3StateStoreManager):
         response = {
@@ -356,7 +356,7 @@ class TestS3StateStoreManager:
                 "RetryAttempts": 0,
             },
             "Deleted": [
-                {"Key": "test_delete"},
+                {"Key": "/state/test_delete"},
             ],
         }
         with self.stubber() as stubber:
@@ -368,7 +368,7 @@ class TestS3StateStoreManager:
                     "Delete": {"Objects": [{"Key": "/state/test_delete"}]},
                 },
             )
-            subject.delete("test_delete")
+            subject.delete("/state/test_delete")
 
     def test_get_state_ids(self, subject: S3StateStoreManager):
         response = {
@@ -489,7 +489,7 @@ class TestGCSStateStoreManager:
         assert not got_reader
 
     def test_state_path(self, subject: GCSStateStoreManager):
-        assert subject.state_dir == "/state/"
+        assert subject.state_dir == "state"
 
     def test_delete(self, subject: GCSStateStoreManager, mock_client):
         mock_blob = MagicMock()

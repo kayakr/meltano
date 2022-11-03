@@ -93,7 +93,7 @@ class S3StateStoreManager(BaseFilesystemStateStoreManager):
         Returns:
             The relevant prefix
         """
-        return self.prefix
+        return self.prefix.lstrip(self.delimiter).rstrip(self.delimiter)
 
     def get_state_ids(self, pattern: str | None = None):
         """Get list of state_ids stored in the backend.
@@ -128,5 +128,5 @@ class S3StateStoreManager(BaseFilesystemStateStoreManager):
         """
         self.client.delete_objects(
             Bucket=self.bucket,
-            Delete={"Objects": [{"Key": self.join_path(self.prefix, file_path)}]},
+            Delete={"Objects": [{"Key": file_path}]},
         )

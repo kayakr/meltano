@@ -44,7 +44,9 @@ class GCSStateStoreManager(BaseFilesystemStateStoreManager):
         """
         from google.api_core.exceptions import NotFound  # type: ignore
 
-        return isinstance(err, NotFound) and "blob" in err.args[0]
+        return isinstance(err, NotFound) and (
+            "No such object:" in err.args[0] or "blob" in err.args[0]
+        )
 
     @property
     def client(self):
@@ -72,7 +74,7 @@ class GCSStateStoreManager(BaseFilesystemStateStoreManager):
         Returns:
             The relevant prefix
         """
-        return self.prefix
+        return self.prefix.lstrip(self.delimiter).rstrip(self.delimiter)
 
     def get_state_ids(self, pattern: str | None = None):  # noqa: WPS210
         """Get list of state_ids stored in the backend.
@@ -100,7 +102,16 @@ class GCSStateStoreManager(BaseFilesystemStateStoreManager):
 
         Args:
             file_path: the path to delete.
+
+        Raises:
+            Exception: if error not indicating file is not found is thrown
         """
         bucket = self.client.bucket(self.bucket)
-        blob = bucket.blob(file_path)
-        blob.delete()
+        try:
+            blob = bucket.blob(file_path)
+            blob.delete()
+        except Exception as e:
+            if self.is_file_not_found_error(e):
+                ...
+            else:
+                raise e

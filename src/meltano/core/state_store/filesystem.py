@@ -30,6 +30,8 @@ class InvalidStateBackendConfigurationException:
 class BaseFilesystemStateStoreManager(StateStoreManager):  # noqa: WPS214
     """Base class for filesystem state backends."""
 
+    delimiter = "/"
+
     def __init__(self, uri: str, lock_timeout_seconds: int, **kwargs):
         """Initialize the BaseFilesystemStateStoreManager.
 
@@ -43,8 +45,7 @@ class BaseFilesystemStateStoreManager(StateStoreManager):  # noqa: WPS214
         self.lock_timeout_seconds = lock_timeout_seconds
         self.parsed = urlparse(self.uri)
 
-    @staticmethod
-    def join_path(*components: str) -> str:
+    def join_path(self, *components: str) -> str:
         """Join path components in filesystem-independent manner.
 
         Creates consistent paths for use in various cloud backends.
@@ -57,8 +58,8 @@ class BaseFilesystemStateStoreManager(StateStoreManager):  # noqa: WPS214
         """
         return reduce(
             lambda comp1, comp2: f"{comp1}{comp2}"
-            if (comp1.endswith("/") or comp2.startswith("/"))
-            else f"{comp1}/{comp2}",
+            if (comp1.endswith(self.delimiter) or comp2.startswith(self.delimiter))
+            else f"{comp1}{self.delimiter}{comp2}",
             components,
         )
 
@@ -84,12 +85,12 @@ class BaseFilesystemStateStoreManager(StateStoreManager):  # noqa: WPS214
         """
         if self.client:
             with open(
-                self.join_path(self.uri, path),
+                self.join_path(self.uri.rstrip(self.state_dir), path),
                 transport_params={"client": self.client},
             ) as reader:
                 yield reader
         else:
-            with open(self.join_path(self.uri, path)) as reader:
+            with open(self.join_path(self.uri.rstrip(self.state_dir), path)) as reader:
                 yield reader
 
     @contextmanager
@@ -104,14 +105,14 @@ class BaseFilesystemStateStoreManager(StateStoreManager):  # noqa: WPS214
         """
         try:
             with open(
-                self.join_path(self.uri, path),
+                self.join_path(self.uri.rstrip(self.state_dir), path),
                 "w+",
                 transport_params={"client": self.client} if self.client else {},
             ) as writer:
                 yield writer
         except NotImplementedError:
             with open(
-                self.join_path(self.uri, path),
+                self.join_path(self.uri.rstrip(self.state_dir), path),
                 "w",
                 transport_params={"client": self.client} if self.client else {},
             ) as writer:
@@ -126,7 +127,7 @@ class BaseFilesystemStateStoreManager(StateStoreManager):  # noqa: WPS214
         ...
 
     @abstractproperty
-    def state_dir(self):
+    def state_dir(self) -> str:
         """Get the path (either filepath or prefix) that state should be stored at."""
         ...
 
@@ -140,11 +141,11 @@ class BaseFilesystemStateStoreManager(StateStoreManager):  # noqa: WPS214
         Returns:
             The constructed path.
         """
-        if self.uri.endswith("/") or state_id.startswith("/"):
-            state_path = state_id
-        else:
-            state_path = f"/{state_id}"
-        return self.join_path(state_path, filename) if filename else state_path
+        return (
+            self.join_path(self.state_dir, state_id, filename)
+            if filename
+            else self.join_path(self.state_dir, state_id)
+        )
 
     def get_state_path(self, state_id: str) -> str:
         """Get the path to the file/blob storing complete state for the given state_id.
@@ -326,7 +327,6 @@ class LocalFilesystemStateStoreManager(BaseFilesystemStateStoreManager):  # noqa
     """State backend for local filesystem."""
 
     label: str = "Local Filesystem"
-    delimiter: str = "/"
 
     def __init__(self, **kwargs):
         """Initialize the LocalFilesystemStateStoreManager.
@@ -349,26 +349,6 @@ class LocalFilesystemStateStoreManager(BaseFilesystemStateStoreManager):  # noqa
             True if error represents file not being found, else False
         """
         return isinstance(err, FileNotFoundError)
-
-    def get_path(self, state_id: str, filename: str | None = None) -> str:
-        """Get the path for the given state_id and filename.
-
-        Args:
-            state_id: the state_id to get path for
-            filename: the name of the file to get path for
-
-        Returns:
-            The constructed path.
-        """
-        if self.uri.endswith(self.delimiter) or state_id.startswith(self.delimiter):
-            state_id_path = state_id
-        else:
-            state_id_path = f"{self.delimiter}{state_id}"
-        return (
-            self.join_path(self.state_dir, state_id_path, filename)
-            if filename
-            else self.join_path(self.state_dir, state_id_path)
-        )
 
     @property
     def client(self):
@@ -487,14 +467,10 @@ class WindowsFilesystemStateStoreManager(LocalFilesystemStateStoreManager):
             The constructed path.
         """
         state_id = b64encode(state_id.encode()).decode()
-        if self.uri.endswith(self.delimiter) or state_id.startswith(self.delimiter):
-            state_id_path = state_id
-        else:
-            state_id_path = f"{self.delimiter}{state_id}"
         return (
-            self.join_path(self.state_dir, state_id_path, filename)
+            self.join_path(self.state_dir, state_id, filename)
             if filename
-            else self.join_path(self.state_dir, state_id_path)
+            else self.join_path(self.state_dir, state_id)
         )
 
     def get_state_ids(self, pattern: str | None = None):
