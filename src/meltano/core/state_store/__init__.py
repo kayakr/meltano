@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import platform
 from enum import Enum
-from typing import Any, Union
 from urllib.parse import urlparse
 
 from sqlalchemy.orm import Session
@@ -47,14 +46,12 @@ class StateBackend(str, Enum):
         self,
     ) -> dict[
         str,
-        Union[
-            type[DBStateStoreManager],
-            type[LocalFilesystemStateStoreManager],
-            type[WindowsFilesystemStateStoreManager],
-            type[AZStorageStateStoreManager],
-            type[GCSStateStoreManager],
-            type[S3StateStoreManager],
-        ],
+        type[DBStateStoreManager]
+        | type[LocalFilesystemStateStoreManager]
+        | type[WindowsFilesystemStateStoreManager]
+        | type[AZStorageStateStoreManager]
+        | type[GCSStateStoreManager]
+        | type[S3StateStoreManager],
     ]:
         """Get mapping of StateBackend to associated StateStoreManager.
 
@@ -72,13 +69,10 @@ class StateBackend(str, Enum):
     @property
     def manager(
         self,
-    ) -> Union[
-        type[DBStateStoreManager],
-        type[LocalFilesystemStateStoreManager],
-        type[WindowsFilesystemStateStoreManager],
-        type[AZStorageStateStoreManager],
-        type[GCSStateStoreManager],
-        type[S3StateStoreManager],
+    ) -> type[DBStateStoreManager] | type[LocalFilesystemStateStoreManager] | type[
+        WindowsFilesystemStateStoreManager
+    ] | type[AZStorageStateStoreManager] | type[GCSStateStoreManager] | type[
+        S3StateStoreManager
     ]:
         """Get the StateStoreManager associated with this StateBackend.
 
