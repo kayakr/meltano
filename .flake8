@@ -300,3 +300,4 @@ per-file-ignores =
     src/meltano/core/state_store/__init__.py:
         # Ignore multi-line function annotations
 	WPS320
+	
