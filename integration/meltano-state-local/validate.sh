@@ -2,7 +2,6 @@
 
 set -euo pipefail
 
-LOG_FILE="./docs/example-library/meltano-state-local/integration-test.log"
 
 # we could also run psql statements
 # check for the existance of files
