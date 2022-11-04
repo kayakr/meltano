@@ -9,7 +9,7 @@ meltano install
 ## Configure meltano to use local filesystem for state.
 
 ```shell
-meltano config meltano set state_backend.uri "file:///${MELTANO_PROJECT_ROOT}/.meltano/state"
+meltano config meltano set state_backend.uri "file:///`pwd`/.meltano/state"
 ```
 
 ## Configure the tap and target
