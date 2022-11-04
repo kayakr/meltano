@@ -1,5 +1,9 @@
 # Using S3 as a state backend
 
+```bash @mdsh
+mdsh-lang-python() { python; }
+```
+
 To begin, download or copy the [meltano.yml](/docs/example-library/meltano-s3/meltano.yml) to an empty directory and run:
 
 ```shell
