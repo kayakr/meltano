@@ -42,21 +42,28 @@ def encode_if_on_windows(string: str) -> str:
 
 class TestLocalFilesystemStateStoreManager:
     @pytest.fixture(scope="function")
-    def subject(self, test_dir):
+    def subject(self, function_scoped_test_dir):
         if on_windows():
             yield WindowsFilesystemStateStoreManager(
-                uri=f"file://{test_dir}\\.meltano\\state\\", lock_timeout_seconds=10
+                uri=f"file://{function_scoped_test_dir}\\.meltano\\state\\",
+                lock_timeout_seconds=10,
             )
         else:
             yield LocalFilesystemStateStoreManager(
-                uri=f"file://{test_dir}/.meltano/state/", lock_timeout_seconds=10
+                uri=f"file://{function_scoped_test_dir}/.meltano/state/",
+                lock_timeout_seconds=10,
             )
 
     @pytest.fixture(scope="function")
-    def state_path(self, test_dir, subject: LocalFilesystemStateStoreManager):
+    def state_path(
+        self, function_scoped_test_dir, subject: LocalFilesystemStateStoreManager
+    ):
         Path(subject.state_dir).mkdir(parents=True, exist_ok=True)
-        yield os.path.join(test_dir, ".meltano", "state")
-        shutil.rmtree(os.path.join(test_dir, ".meltano", "state"), ignore_errors=True)
+        yield os.path.join(function_scoped_test_dir, ".meltano", "state")
+        shutil.rmtree(
+            os.path.join(function_scoped_test_dir, ".meltano", "state"),
+            ignore_errors=True,
+        )
 
     def test_join_path(self, subject: LocalFilesystemStateStoreManager):
         if on_windows():
@@ -198,7 +205,7 @@ class TestLocalFilesystemStateStoreManager:
 
 class TestAZStorageStateStoreManager:
     @pytest.fixture(scope="function")
-    def subject(self, test_dir):
+    def subject(self, function_scoped_test_dir):
         return AZStorageStateStoreManager(
             uri="azure://meltano/state/",
             connection_string="testing_connection_string",
@@ -287,7 +294,7 @@ class TestS3StateStoreManager:
                 yield stubber
 
     @pytest.fixture
-    def subject(self, test_dir):
+    def subject(self, function_scoped_test_dir):
         return S3StateStoreManager(
             uri="s3://test_access_key_id:test_secret_access_key@meltano/state",
             container_name="testing",
@@ -438,7 +445,7 @@ class TestS3StateStoreManager:
 
 class TestGCSStateStoreManager:
     @pytest.fixture(scope="function")
-    def subject(self, test_dir):
+    def subject(self, function_scoped_test_dir):
         return GCSStateStoreManager(
             uri="gs://meltano/state/",
             application_credentials="path/to/creds/file",
